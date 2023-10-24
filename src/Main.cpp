@@ -4,12 +4,11 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <fourier.hpp>
-#include <function_window.hpp>
-#include <input_handler.hpp>
+#include <functions/composite_function.hpp>
+
 #include <windows.h>
-#include <guiwindow.hpp>
-#include <fnbox.hpp>
+#include <gui/guiwindow.hpp>
+#include <gui/fnbox.hpp>
 
 int main()
 {
@@ -21,7 +20,7 @@ int main()
 
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 1;
-	sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Fourier Series Visualisator", sf::Style::Default, settings);
+	sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Weird Lil Function Visualisator", sf::Style::Default, settings);
 	const uint32_t framerate = 120;
 	window.setFramerateLimit(framerate);
 	window.setKeyRepeatEnabled(true);

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <composite_function.hpp>
-#include <function_window.hpp>
-#include <gui/button.hpp>
-#include <input_handler.hpp>
+#include <functions/composite_function.hpp>
+#include <gui/function_window.hpp>
+#include <gui/gui_elements/button.hpp>
+#include <gui/input_handler.hpp>
 
 class GuiWindow
 {

@@ -1,6 +1,6 @@
 #pragma once
-#include <function_window.hpp>
-#include <input_handler.hpp>
+#include <gui/function_window.hpp>
+#include <gui/input_handler.hpp>
 
 class FnBox
 {

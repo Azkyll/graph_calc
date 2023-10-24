@@ -168,6 +168,7 @@ public:
 	}
 
 	friend class InputBox;
+	friend class FnBox;
 
 private:
 	sf::Text text;

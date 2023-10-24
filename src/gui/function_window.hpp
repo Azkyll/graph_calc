@@ -1,11 +1,13 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <composite_function.hpp>
-#include <fourier.hpp>
+
+#include <functions/composite_function.hpp>
+#include <functions/fourier.hpp>
+#include <functions/polynomial.hpp>
+
+#include <gui/gui_elements/button.hpp>
 #include <grid.hpp>
-#include <gui/button.hpp>
-#include <polynomial.hpp>
 
 class GraphWindow
 {
