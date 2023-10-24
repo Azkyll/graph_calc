@@ -31,9 +31,10 @@ enum fourierMode
 
 inline int digits_after_decimal_point(float x)
 {
-    int i;
-    for (i=0; x!=rint(x); x+=x, i++);
-    return i;
+	int i;
+	for (i = 0; x != rint(x); x += x, i++)
+		;
+	return i;
 }
 
 class InputBox : public Textbox
@@ -52,6 +53,10 @@ public:
 		setCharacterSize(30);
 		setSelected(false);
 		setPosition(position);
+
+		helper.setCharacterSize(30);
+		helper.setPosition(position + sf::Vector2f { 500, 0 });
+		helper.setString(defaultHelperText);
 	}
 
 	void typing(sf::Event input)
@@ -63,6 +68,7 @@ public:
 			fWindow->clear();
 			tmode = def;
 			fmode = sine;
+			helper.setString(defaultHelperText);
 			numberBuffer = 0;
 			setText("");
 			coeffBuffer.clear();
@@ -81,11 +87,13 @@ public:
 
 	void drawTo(sf::RenderWindow& window)
 	{
+		window.draw(helper);
 		Textbox::drawTo(window);
 	}
 
 	void setFont(sf::Font& font)
 	{
+		helper.setFont(font);
 		Textbox::setFont(font);
 	}
 
@@ -95,6 +103,7 @@ public:
 	}
 
 private:
+	sf::Text helper;
 	GraphWindow* fWindow = nullptr;
 	bool isSelected = false;
 
@@ -106,7 +115,9 @@ private:
 	std::vector<float> coeffBuffer;
 	std::vector<float> sineBuffer;
 	std::vector<float> polyBuffer;
-	float numberBuffer;
+	float numberBuffer = 0;
+
+	std::string defaultHelperText = "Normal mode.\nPress P, F, \n* or + to enter a mode.";
 
 	void deleteLastCharacter()
 	{
@@ -132,11 +143,13 @@ private:
 
 			coeffBuffer.push_back(numberBuffer);
 			tmode = def;
+			helper.setString(defaultHelperText);
 
 			if (isAddingModeOn || isMultiplyModeOn)
 			{
 				polyBuffer = coeffBuffer;
 				tmode = fourier;
+				helper.setString("Enter the sine coefficients of the series");
 			}
 			else
 				fWindow->addFunction(Polynomial(coeffBuffer));
@@ -184,6 +197,7 @@ private:
 					fmode = cosine;
 					sineBuffer = coeffBuffer;
 					coeffBuffer.clear();
+					helper.setString("Fourier mode. \n Enter cosine coefficients");
 					break;
 
 				case cosine: {
@@ -204,6 +218,8 @@ private:
 						fWindow->addFunction(newSeries);
 					sineBuffer.clear();
 					coeffBuffer.clear();
+					helper.setString(defaultHelperText);
+					break;
 				}
 				default:
 					break;
@@ -234,18 +250,21 @@ private:
 		if (charTyped == P_KEY)
 		{
 			tmode = polynomial;
+			helper.setString("Polynomial mode. \n Enter coefficients");
 			return;
 		}
 
 		if (charTyped == F_KEY)
 		{
 			tmode = fourier;
+			helper.setString("Fourier mode. \n Enter sine coefficients");
 			return;
 		}
 
 		if (charTyped == PLUS_KEY)
 		{
 			isAddingModeOn = true;
+			helper.setString("Adding mode. \nEnter polynomial, then Fourier");
 			tmode = polynomial;
 			return;
 		}
@@ -253,6 +272,7 @@ private:
 		if (charTyped == TIMES_KEY)
 		{
 			isMultiplyModeOn = true;
+			helper.setString("Multiplication mode. \nEnter polynomial, then Fourier");
 			tmode = polynomial;
 			return;
 		}

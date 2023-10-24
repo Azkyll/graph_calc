@@ -41,21 +41,34 @@ int main()
 	GraphWindow fwin({ 0, 0 }, { 1920, 600 }, { -10, 10 }, { -10, 10 });
 
 
-	InputBox box(fwin, { 0, 650 });
-	box.setFont(font);
+	//InputBox box(fwin, { 0, 650 });
+	//box.setFont(font);
 
 	GuiWindow gWindow({0, 0},{1920, 880}, fwin);
 	gWindow.setFont(font);
 
-	//FnBox fbox(fwin, {1450, 0});
-	//fbox.setFont(font);
+	FnBox fbox(fwin, {1450, 0});
+	fbox.setFont(font);
 
 	gWindow.addFunction(SumFunction(Polynomial({0, 1}),FourierSeries({1},{})));
 
 	gWindow.addFunction(SumFunction(Polynomial({0, 1}),FourierSeries({},{1})));
 
+	// sf::Event p;
+	// p.key.code = sf::Keyboard::P;
+	// p.text.unicode = P_KEY;
+	// sf::Event One;
+	// One.key.code = sf::Keyboard::Num1;
+	// One.text.unicode = 49;
+	// //sf::Event Plus;
+	// //Plus.key.code = sf::Keyboard::Add;
+	// sf::Event Eq;
+	// Eq.key.code = sf::Keyboard::Enter;
+	// Eq.text.unicode = ENTER_KEY;
 
-
+	// fbox.typing(p);
+	// fbox.typing(One);
+	// fbox.typing(Eq);
 
 	/*
 	box.inputLogic(P_KEY);
@@ -83,7 +96,7 @@ int main()
 					window.close();
 					break;
 				case sf::Event::TextEntered:
-					box.typing(event);
+					fbox.typing(event);
 					break;
 				case sf::Event::MouseButtonPressed:
 					if(gWindow.isInClearBtn(window))
@@ -97,8 +110,8 @@ int main()
 
 		window.clear(sf::Color::Black);
 		gWindow.drawTo(window);
-		box.drawTo(window);
-		//fbox.drawTo(window);
+		//box.drawTo(window);
+		fbox.drawTo(window);
 		window.display();
 	}
 

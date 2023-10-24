@@ -13,6 +13,7 @@ public:
 		input { window, position }
 	{
 		btn.setFillColor(sf::Color::Red);
+		input.setSelected(true);
 	}
 
 	FnBox(GraphWindow& window, sf::Vector2f position, sf::Vector2f size) :
