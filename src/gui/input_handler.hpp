@@ -97,7 +97,6 @@ public:
 
 private:
 	GraphWindow* fWindow = nullptr;
-	bool isSelected = false;
 
 	typingMode tmode = def;
 	fourierMode fmode = sine;

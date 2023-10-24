@@ -53,21 +53,22 @@ int main()
 
 	gWindow.addFunction(SumFunction(Polynomial({0, 1}),FourierSeries({},{1})));
 
-	// sf::Event p;
-	// p.key.code = sf::Keyboard::P;
-	// p.text.unicode = P_KEY;
-	// sf::Event One;
-	// One.key.code = sf::Keyboard::Num1;
-	// One.text.unicode = 49;
-	// //sf::Event Plus;
-	// //Plus.key.code = sf::Keyboard::Add;
-	// sf::Event Eq;
-	// Eq.key.code = sf::Keyboard::Enter;
-	// Eq.text.unicode = ENTER_KEY;
+	sf::Event p;
+	p.key.code = sf::Keyboard::P;
+	p.text.unicode = P_KEY;
+	sf::Event One;
+	One.key.code = sf::Keyboard::Num1;
+	One.text.unicode = 49;
+	//sf::Event Plus;
+	//Plus.key.code = sf::Keyboard::Add;
+	sf::Event Eq;
+	Eq.key.code = sf::Keyboard::Enter;
+	Eq.text.unicode = ENTER_KEY;
 
-	// fbox.typing(p);
-	// fbox.typing(One);
-	// fbox.typing(Eq);
+	fbox.typing(Eq);
+	fbox.typing(p);
+	fbox.typing(One);
+	fbox.typing(Eq);
 
 	/*
 	box.inputLogic(P_KEY);

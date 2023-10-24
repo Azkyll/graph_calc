@@ -9,7 +9,7 @@ public:
 	{}
 
 	FnBox(GraphWindow& window, sf::Vector2f position) :
-		btn {position, {200, 100}, "Test"},
+		btn { position, { 450, 150 }, "Test" },
 		input { window, position }
 	{
 		btn.setFillColor(sf::Color::Red);
@@ -17,7 +17,7 @@ public:
 	}
 
 	FnBox(GraphWindow& window, sf::Vector2f position, sf::Vector2f size) :
-		btn {position, size, "Test"},
+		btn { position, size, "Test" },
 		input { window, position }
 	{
 		btn.setFillColor(sf::Color::Red);
@@ -37,7 +37,10 @@ public:
 
 	void typing(sf::Event event)
 	{
-		if(not(input.getSelected()))
+		if(event.text.unicode == ENTER_KEY && !getSelected())
+			setSelected(true);
+
+		if (not(getSelected()))
 			return;
 		btn.setText("");
 		input.typing(event);
@@ -49,8 +52,18 @@ public:
 		input.drawTo(window);
 	}
 
+	void setSelected(bool sel)
+	{
+		input.setSelected(sel);
+	}
+
+	bool getSelected()
+	{
+		return input.getSelected();
+	}
+
 private:
 	Button btn;
 	InputBox input;
-	SumFunction func;
+	ProdFunction func;
 };

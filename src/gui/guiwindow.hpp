@@ -41,8 +41,8 @@ public:
 
 	void drawTo(sf::RenderWindow& w)
 	{
-		//clearBtn.drawTo(w);
-		//deleteBtn.drawTo(w);
+		clearBtn.drawTo(w);
+		deleteBtn.drawTo(w);
 		window->drawTo(w);
 	}
 
