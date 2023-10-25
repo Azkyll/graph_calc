@@ -3,8 +3,6 @@
 #include <SFML/Graphics.hpp>
 
 #include <functions/composite_function.hpp>
-#include <functions/fourier.hpp>
-#include <functions/polynomial.hpp>
 
 #include <gui/gui_elements/button.hpp>
 #include <grid.hpp>
@@ -47,10 +45,17 @@ public:
 		return (pol);
 	}
 
-	SumFunction addFunction(SumFunction sf)
+	SumFunction addFunction(SumFunction sFunc)
 	{
-		drawGraph(sf);
-		return (sf);
+		drawGraph(sFunc);
+		return (sFunc);
+	}
+
+	ProdFunction addFunction(ProdFunction pFunc)
+	{
+		drawGraph(pFunc);
+		return pFunc;
+
 	}
 
 	void setSize(sf::Vector2f s)
@@ -82,7 +87,7 @@ public:
 		yLimits = yl;
 	}
 
-	void drawGraph(FourierSeries& series)
+	void drawGraph(FourierSeries series)
 	{
 		for (float x = xLimits.x; x < xLimits.y; x += scale.x)
 		{
@@ -109,6 +114,17 @@ public:
 		for (float x = xLimits.x; x < xLimits.y; x += scale.x)
 		{
 			float y = -sF.compute(x);
+			if (y > yLimits.x && y < yLimits.y)
+				graph.setPixel((x - xLimits.x) / scale.x, (y - yLimits.x) / scale.y, sf::Color::White);
+		}
+		texture.loadFromImage(graph);
+	}
+
+	void drawGraph(ProdFunction pF)
+	{
+		for (float x = xLimits.x; x < xLimits.y; x += scale.x)
+		{
+			float y = -pF.compute(x);
 			if (y > yLimits.x && y < yLimits.y)
 				graph.setPixel((x - xLimits.x) / scale.x, (y - yLimits.x) / scale.y, sf::Color::White);
 		}

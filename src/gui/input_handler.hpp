@@ -95,6 +95,27 @@ public:
 		return isSelected;
 	}
 
+	void createFunction(std::vector<float> pCoeffs)
+	{
+		fWindow->drawGraph(pCoeffs);
+		return;
+	}
+
+	void createFunction(std::vector<float> sCoeffs, std::vector<float> cCoeffs)
+	{
+		fWindow->drawGraph(FourierSeries(sCoeffs, cCoeffs));
+		return;
+	}
+
+	void createFunction(std::vector<float> pCoeffs, std::vector<float> sCoeffs, std::vector<float> cCoeffs)
+	{
+		if(isMultiplyModeOn)
+			fWindow->drawProduct(FourierSeries(sCoeffs, cCoeffs), pCoeffs);
+		else
+			fWindow->drawSum(FourierSeries(sCoeffs, cCoeffs), pCoeffs);
+		return;
+	}
+
 private:
 	GraphWindow* fWindow = nullptr;
 

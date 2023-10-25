@@ -37,7 +37,12 @@ public:
 
 	void typing(sf::Event event)
 	{
-		if(event.text.unicode == ENTER_KEY && !getSelected())
+		if (isFull)
+		{
+			setSelected(false);
+			return;
+		}
+		if (event.text.unicode == ENTER_KEY && !getSelected())
 			setSelected(true);
 
 		if (not(getSelected()))
@@ -62,8 +67,11 @@ public:
 		return input.getSelected();
 	}
 
+	// TODO overload
+
 private:
 	Button btn;
 	InputBox input;
 	ProdFunction func;
+	bool isFull = false;
 };
