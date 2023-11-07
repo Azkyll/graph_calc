@@ -67,8 +67,6 @@ public:
 		return input.getSelected();
 	}
 
-	// TODO overload
-
 private:
 	Button btn;
 	InputBox input;
