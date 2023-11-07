@@ -15,5 +15,5 @@ What **WILL** it eventually (hopefully) do?
   Allow the user to create, draw and manually handle functions, both using in-window keyboard input to interact with the functional/mathematical object, and the mouse to interact with the curve of the function. It will also eventually be linked to a sampler.
 
 ## TODO
-  - store
+  - implement creation of functions using operations (i.e. cos(x + 1) or sin + cos)
   - expand and make a full GUI
