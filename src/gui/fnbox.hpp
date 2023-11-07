@@ -1,6 +1,6 @@
 #pragma once
 #include <gui/function_window.hpp>
-#include <gui/input_handler.hpp>
+#include <gui/input_handler_v2.hpp>
 
 class FnBox
 {
@@ -70,6 +70,6 @@ public:
 private:
 	Button btn;
 	InputBox input;
-	ProdFunction func;
+	functions::func_ff func;
 	bool isFull = false;
 };

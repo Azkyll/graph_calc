@@ -1,21 +1,11 @@
 #pragma once
 
-#include <functions/composite_function.hpp>
-
 #include <SFML/Graphics.hpp>
 #include <gui/function_window.hpp>
 #include <gui/gui_elements/textbox.hpp>
 
 using Keyboard = sf::Keyboard;
 
-enum Operations
-{
-	none,
-	add,
-	substract,
-	multiply,
-	divide
-};
 
 class InputBox : public Textbox
 {
@@ -37,7 +27,7 @@ public:
 
 	void typing(sf::Event input)
 	{
-		int charTyped = input.text.unicode;
+		Textbox::typing(input);
 	}
 
 	void drawTo(sf::RenderWindow& window)
@@ -55,16 +45,22 @@ public:
 		return isSelected;
 	}
 
-	void createFunction()
+	void storeFunction()
 	{
+		storedFunction = functions::fromBuffer<float>(inputBuffer);
+	}
+
+	functions::func_ff getStored()
+	{
+		return storedFunction;
 	}
 
 private:
 	GraphWindow* fWindow = nullptr;
 	std::vector<std::string> inputBuffer = { "" };
 	uint32_t current_index = 0;
+	functions::func_ff storedFunction = functions::id<float>;
 
-	Operations storedOperation = none;
 
 	void deleteLastCharacter()
 
@@ -77,7 +73,7 @@ private:
 		switch (charTyped)
 		{
 			case Keyboard::Enter:
-				createFunction();
+				storeFunction();
 				inputBuffer.clear();
 				Textbox::clear();
 				return;
@@ -88,6 +84,7 @@ private:
 
 			case Keyboard::RBracket:
 				current_index--;
+
 
 			default:
 				break;

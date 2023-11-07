@@ -1,9 +1,8 @@
 #pragma once
 
-#include <functions/composite_function.hpp>
 #include <gui/function_window.hpp>
 #include <gui/gui_elements/button.hpp>
-#include <gui/input_handler.hpp>
+#include <gui/input_handler_v2.hpp>
 
 class GuiWindow
 {
@@ -46,11 +45,11 @@ public:
 		window->drawTo(w);
 	}
 
-	void deleteFunction(SumFunction func)
+	void deleteFunction(uint index)
 	{
-		functions.erase(std::remove(functions.begin(), functions.end(), func), functions.end());
+		functions.erase(functions.begin() + index);
 		window->clear();
-		for (SumFunction f : functions)
+		for (functions::func_ff f : functions)
 			window->drawGraph(f);
 	}
 
@@ -60,11 +59,11 @@ public:
 			return;
 		functions.pop_back();
 		window->clear();
-		for (SumFunction f : functions)
+		for (functions::func_ff f : functions)
 			window->drawGraph(f);
 	}
 
-	void addFunction(SumFunction func)
+	void addFunction(functions::func_ff func)
 	{
 		functions.push_back(func);
 		window->drawGraph(func);
@@ -106,7 +105,7 @@ private:
 	sf::Vector2f position = {};
 	sf::Vector2f size = {};
 
-	std::vector<SumFunction> functions;
+	std::vector<functions::func_ff> functions;
 
 	GraphWindow* window = nullptr;
 	Button clearBtn;

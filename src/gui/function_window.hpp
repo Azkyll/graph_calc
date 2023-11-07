@@ -2,9 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <functions/composite_function.hpp>
-
 #include <gui/gui_elements/button.hpp>
+#include <functions.hpp>
 #include <grid.hpp>
 
 class GraphWindow
@@ -33,30 +32,6 @@ public:
 		texture.create(size.x, size.y);
 	}
 
-	FourierSeries addFunction(FourierSeries ser)
-	{
-		drawGraph(ser);
-		return (ser);
-	}
-
-	Polynomial addFunction(Polynomial pol)
-	{
-		drawGraph(pol);
-		return (pol);
-	}
-
-	SumFunction addFunction(SumFunction sFunc)
-	{
-		drawGraph(sFunc);
-		return (sFunc);
-	}
-
-	ProdFunction addFunction(ProdFunction pFunc)
-	{
-		drawGraph(pFunc);
-		return pFunc;
-
-	}
 
 	void setSize(sf::Vector2f s)
 	{
@@ -87,80 +62,15 @@ public:
 		yLimits = yl;
 	}
 
-	void drawGraph(FourierSeries series)
+	void drawGraph(functions::func_ff p)
 	{
 		for (float x = xLimits.x; x < xLimits.y; x += scale.x)
 		{
-			float y = -series.compute(x);
+			float y = -p(x);
 			if (y > yLimits.x && y < yLimits.y)
 				graph.setPixel((x - xLimits.x) / scale.x, (y - yLimits.x) / scale.y, sf::Color::White);
 		}
 		texture.loadFromImage(graph);
-	}
-
-	void drawGraph(Polynomial p)
-	{
-		for (float x = xLimits.x; x < xLimits.y; x += scale.x)
-		{
-			float y = -p.compute(x);
-			if (y > yLimits.x && y < yLimits.y)
-				graph.setPixel((x - xLimits.x) / scale.x, (y - yLimits.x) / scale.y, sf::Color::White);
-		}
-		texture.loadFromImage(graph);
-	}
-
-	void drawGraph(SumFunction sF)
-	{
-		for (float x = xLimits.x; x < xLimits.y; x += scale.x)
-		{
-			float y = -sF.compute(x);
-			if (y > yLimits.x && y < yLimits.y)
-				graph.setPixel((x - xLimits.x) / scale.x, (y - yLimits.x) / scale.y, sf::Color::White);
-		}
-		texture.loadFromImage(graph);
-	}
-
-	void drawGraph(ProdFunction pF)
-	{
-		for (float x = xLimits.x; x < xLimits.y; x += scale.x)
-		{
-			float y = -pF.compute(x);
-			if (y > yLimits.x && y < yLimits.y)
-				graph.setPixel((x - xLimits.x) / scale.x, (y - yLimits.x) / scale.y, sf::Color::White);
-		}
-		texture.loadFromImage(graph);
-	}
-
-	void drawSum(Polynomial p, FourierSeries f)
-	{
-		for (float x = xLimits.x; x < xLimits.y; x += scale.x)
-		{
-			float y = -f.compute(x) - p.compute(x);
-			if (y > yLimits.x && y < yLimits.y)
-				graph.setPixel((x - xLimits.x) / scale.x, (y - yLimits.x) / scale.y, sf::Color::White);
-		}
-		texture.loadFromImage(graph);
-	}
-
-	void drawSum(FourierSeries f, Polynomial p)
-	{
-		drawSum(p, f);
-	}
-
-	void drawProduct(Polynomial p, FourierSeries f)
-	{
-		for (float x = xLimits.x; x < xLimits.y; x += scale.x)
-		{
-			float y = -f.compute(x) * p.compute(x);
-			if (y > yLimits.x && y < yLimits.y)
-				graph.setPixel((x - xLimits.x) / scale.x, (y - yLimits.x) / scale.y, sf::Color::White);
-		}
-		texture.loadFromImage(graph);
-	}
-
-	void drawProduct(FourierSeries f, Polynomial p)
-	{
-		drawProduct(p, f);
 	}
 
 	void drawTo(sf::RenderWindow& window)

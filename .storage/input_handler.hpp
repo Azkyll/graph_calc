@@ -1,9 +1,9 @@
 #pragma once
 
-#include <functions/composite_function.hpp>
-
-#include <gui/function_window.hpp>
 #include <gui/gui_elements/textbox.hpp>
+#include <gui/function_window.hpp>
+#include <functions.hpp>
+
 
 #define P_KEY 80
 #define C_KEY 67
@@ -16,26 +16,8 @@
 
 #define POINT_KEY 46
 
-enum typingMode
-{
-	def,
-	polynomial,
-	fourier
-};
 
-enum fourierMode
-{
-	sine,
-	cosine
-};
 
-inline int digits_after_decimal_point(float x)
-{
-	int i;
-	for (i = 0; x != rint(x); x += x, i++)
-		;
-	return i;
-}
 
 class InputBox : public Textbox
 {
@@ -58,18 +40,6 @@ public:
 	void typing(sf::Event input)
 	{
 		int charTyped = input.text.unicode;
-
-		if (charTyped == C_KEY)
-		{
-			fWindow->clear();
-			tmode = def;
-			fmode = sine;
-			numberBuffer = 0;
-			setText("");
-			coeffBuffer.clear();
-			sineBuffer.clear();
-			return;
-		}
 
 		if (charTyped == DELETE_KEY && hasLimit && string.str().length() >= characterLimit)
 		{
