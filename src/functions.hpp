@@ -1,4 +1,6 @@
 #pragma once
+
+#include <cmath>
 #include <functional>
 #include <iostream>
 
@@ -18,48 +20,10 @@ enum Operations
 	ADD,
 	MULTIPLY,
 	SUBSTRACT,
-	DIVIDE
+	DIVIDE,
+	COMPOSE,
+	POWER
 };
-
-template <typename T>
-std::function<T(T)> sum(std::function<T(T)> f, std::function<T(T)> g)
-{
-	return [f, g](T x) {
-		return f(x) + g(x);
-	};
-}
-
-template <typename T>
-std::function<T(T)> product(std::function<T(T)> f, std::function<T(T)> g)
-{
-	return [f, g](T x) {
-		return f(x) * g(x);
-	};
-}
-
-template <typename T>
-std::function<T(T)> difference(std::function<T(T)> f, std::function<T(T)> g)
-{
-	return [f, g](T x) {
-		return f(x) - g(x);
-	};
-}
-
-template <typename T>
-std::function<T(T)> quotient(std::function<T(T)> f, std::function<T(T)> g)
-{
-	return [f, g](T x) {
-		return f(x) / g(x);
-	};
-}
-
-template <typename T>
-std::function<T(T)> pow(std::function<T(T)> f, T n)
-{
-	return [f, n](T x) {
-		return std::pow(f(x), n);
-	};
-}
 
 const double PI = 3.141592653589793238462643;
 
@@ -71,7 +35,11 @@ template <typename T>
 std::function<T(T)> id = [](T x) { return x; };
 
 template <typename T>
-std::function<T(T)> constant_one = [](T x) { return 1; };
+std::function<T(T)> abs = [](T x) { return std::abs(x); };
+
+template <typename T>
+std::function<T(T)> constant_one = [](T x) { (void)x;
+	return (T)1; };
 
 template <typename T>
 std::function<T(T)> exp = [](T x) { return std::exp(x); };
@@ -92,93 +60,72 @@ std::function<T(T)> sinh = [](T x) { return 0.5 * (std::exp(x) - std::exp(-x)); 
 template <typename T>
 std::function<T(T)> tanh = [](T x) { return sinh<T>(x) / cosh<T>(x); };
 
-template <typename F0, typename... F>
-class Composer2
+template <typename T>
+std::function<T(T)> sum(std::function<T(T)> f, std::function<T(T)> g)
 {
-	F0 f0_;
-	Composer2<F...> tail_;
-
-public:
-	Composer2(F0 f0, F... f) :
-		f0_(f0),
-		tail_(f...)
-	{}
-
-	template <typename T>
-	T operator()(const T& x) const
-	{
-		return f0_(tail_(x));
-	}
-};
-
-template <typename F>
-class Composer2<F>
-{
-	F f_;
-
-public:
-	Composer2(F f) :
-		f_(f)
-	{}
-
-	template <typename T>
-	T operator()(const T& x) const
-	{
-		return f_(x);
-	}
-};
-
-template <typename... F>
-Composer2<F...> compose2(F... f)
-{
-	return Composer2<F...>(f...);
+	return [f, g](T x) {
+		return f(x) + g(x);
+	};
 }
 
 template <typename T>
-std::function<T(T)> fromString(std::string input)
+std::function<T(T)> product(std::function<T(T)> f, std::function<T(T)> g)
 {
-	std::function<T(T)> selected_function = functions::id<T>;
-	Operations storedOperation = none;
+	return [f, g](T x) {
+		return f(x) * g(x);
+	};
+}
 
-	// provide function string as ax + bx
-	//
+template <typename T>
+std::function<T(T)> product(std::function<T(T)> f, T a)
+{
+	return [f, a](T x) {
+		return a * f(x);
+	};
+}
 
-	if (input == "x")
-	{
-		return selected_function;
-	}
+template <typename T>
+std::function<T(T)> product(T a, std::function<T(T)> f)
+{
+	return product<T>(f, a);
+}
 
-	std::string buffer = "";
-	double numBuffer = 0;
-	bool inDecimals = false;
-	uint decimalDepth = 0;
+template <typename T>
+std::function<T(T)> difference(std::function<T(T)> f, std::function<T(T)> g)
+{
+	return [f, g](T x) {
+		return f(x) - g(x);
+	};
+}
 
-	for (size_t i = 0; i < input.length(); i++)
-	{
-		char c = input[i];
-		if (c >= ZERO && c <= NINE)
-		{
-			if (inDecimals)
-			{
-				decimalDepth++;
-				numBuffer += std::pow(0.1, decimalDepth) * (c - ZERO);
-			}
-			else
-			{
-				numBuffer = 10 * numBuffer + c - ZERO;
-			}
-		}
+template <typename T>
+std::function<T(T)> quotient(std::function<T(T)> f, std::function<T(T)> g)
+{
+	return [f, g](T x) {
+		return f(x) / g(x);
+	};
+}
 
-		if (c == FULL_STOP)
-		{
-			inDecimals = true;
-		}
+template <typename T>
+std::function<T(T)> compose(std::function<T(T)> f, std::function<T(T)> g)
+{
+	return [f, g](T x) {
+		return f(g(x));
+	};
+}
 
-		if (c >= LETTER_a && c <= LETTER_z)
-		{
-			buffer.push_back(c);
-		}
-	}
+template <typename T>
+std::function<T(T)> pow(std::function<T(T)> f, T n)
+{
+	return [f, n](T x) {
+		return std::pow(f(x), n);
+	};
+}
+
+template <typename T>
+std::function<T(T)> select_function(std::string buffer)
+{
+	std::function<T(T)> selected_function = product<T>(0, functions::constant_one<T>);
 
 	if (buffer == "x")
 		selected_function = functions::id<T>;
@@ -207,6 +154,78 @@ std::function<T(T)> fromString(std::string input)
 	if (buffer == "tanh")
 		selected_function = functions::tanh<T>;
 
+	if (buffer == "")
+		selected_function = functions::constant_one<T>;
+
+
+
+	return selected_function;
+}
+
+template <typename T>
+std::function<T(T)> executeOperation(Operations op, std::function<T(T)> f, std::function<T(T)> g)
+{
+	switch (op)
+	{
+		case ADD:
+			return sum<T>(f, g);
+		case MULTIPLY:
+			return product<T>(f, g);
+		case SUBSTRACT:
+			return difference<T>(f, g);
+		case DIVIDE:
+			return quotient<T>(f, g);
+		case COMPOSE:
+			return compose<T>(f, g);
+		default:
+			return id<T>;
+	}
+}
+
+template <typename T>
+std::function<T(T)> fromString(std::string input)
+{
+	std::function<T(T)> selected_function = functions::id<T>;
+
+	if (input == "x")
+	{
+		return selected_function;
+	}
+
+	std::string buffer = "";
+	T numBuffer = 0;
+	bool inDecimals = false;
+	uint decimalDepth = 1;
+
+	for (size_t i = 0; i < input.length(); i++)
+	{
+		char c = input[i];
+		if (c >= ZERO && c <= NINE)
+		{
+			if (inDecimals)
+			{
+				numBuffer += std::pow(static_cast<T>(0.1), decimalDepth) * (c - ZERO);
+				decimalDepth++;
+			}
+			else
+			{
+				numBuffer = 10 * numBuffer + c - ZERO;
+			}
+		}
+
+		if (c == '.')
+		{
+			inDecimals = true;
+		}
+
+		if (c >= LETTER_a && c <= LETTER_z)
+		{
+			buffer.push_back(c);
+		}
+	}
+
+	selected_function = select_function<T>(buffer);
+
 	if (numBuffer == 0 && buffer != "x")
 	{
 		numBuffer += 1;
@@ -224,7 +243,7 @@ std::function<T(T)> fromBuffer(std::vector<std::string> inputBuffer)
 	for (size_t i = inputBuffer.size(); i > 0; i--)
 	{
 		std::string current_string = inputBuffer[i - 1];
-		current_function = compose2(fromString<T>(current_string), current_function);
+		current_function = compose<T>(fromString<T>(current_string), current_function);
 	}
 	return current_function;
 }
