@@ -42,6 +42,9 @@ std::function<T(T)> constant_one = [](T x) { (void)x;
 	return (T)1; };
 
 template <typename T>
+std::function<T(T)> constant_zero = [](T x){(void)x; return (T)0;};
+
+template <typename T>
 std::function<T(T)> exp = [](T x) { return std::exp(x); };
 template <typename T>
 std::function<T(T)> log = [](T x) { return std::log(x); };

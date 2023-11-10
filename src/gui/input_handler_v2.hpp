@@ -7,6 +7,12 @@
 
 #include <unicode-enum.h>
 
+enum InputType
+{
+	operand,
+	operation
+};
+
 class InputBox : public Textbox
 {
 public:
@@ -64,11 +70,11 @@ public:
 private:
 	GraphWindow* fWindow = nullptr;
 	std::string inputBuffer = "";
-	std::string previous;
+	InputType previousInputType = operation;
 	std::vector<std::stack<functions::func_ff>> functionStacks = { {} };
 	std::vector<std::stack<functions::Operations>> opStacks = { {} };
-	uint32_t current_index = 0;
 	functions::func_ff storedFunction = functions::id<float>;
+	uint current_index = 0;
 
 	void deleteLastCharacter()
 
@@ -76,25 +82,29 @@ private:
 		Textbox::deleteLastCharacter();
 	}
 
-	void emptyLastStacks()
+	void executeLastOperation()
 	{
-		if (opStacks[current_index].size() == 0 && functionStacks[current_index].size() == 0)
-			return;
-		while (functionStacks[current_index].size() > 1)
+		functions::func_ff g(functionStacks[current_index].top());
+		functionStacks[current_index].pop();
+		functions::func_ff f(functionStacks[current_index].top());
+		functionStacks[current_index].pop();
+		functions::Operations op(opStacks[current_index].top());
+		opStacks[current_index].pop();
+		functionStacks[current_index].emplace(functions::executeOperation<float>(op, f, g));
+	}
+
+	void closeLastStack()
+	{
+		while (opStacks[current_index].size() > 0)
 		{
-			functions::func_ff g(functionStacks[current_index].top());
-			functionStacks[current_index].pop();
-			functions::func_ff f(functionStacks[current_index].top());
-			functionStacks[current_index].pop();
-			functions::Operations op(opStacks[current_index].top());
-			opStacks[current_index].pop();
-			functionStacks[current_index].emplace(functions::executeOperation<float>(op, f, g));
+			executeLastOperation();
 		}
 
 		functionStacks[current_index - 1].emplace(functionStacks[current_index].top());
-		functionStacks[current_index].pop();
+
 		functionStacks.pop_back();
 		opStacks.pop_back();
+		current_index--;
 	}
 
 	void inputLogic(int charTyped)
@@ -102,81 +112,76 @@ private:
 		switch (charTyped)
 		{
 			case U::CARRIAGE_RETURN:
-				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
+				if(inputBuffer!="")
+					functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
+				if(current_index > 0)
+					closeLastStack();
 				storeFunction();
 				drawFunction();
-				inputBuffer =  "";
+				inputBuffer = "";
 				Textbox::clear();
 				storedFunction = functions::id<float>;
-				current_index = 0;
 				return;
 
 			case U::LEFT_PARENTHESIS:
-				previous = inputBuffer;
 				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
 				inputBuffer = "";
 
-				if (previous != "+" && previous != "-" && previous != "/" && previous != "^" && previous != "*")
+				if (previousInputType == operand)
 					opStacks[current_index].emplace(functions::COMPOSE);
+				current_index++;
 				functionStacks.push_back({});
 				opStacks.push_back({});
 
-				current_index++;
 				break;
 
 			case U::RIGHT_PARENTHESIS:
 				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
-				previous = inputBuffer;
 				inputBuffer = "";
-				emptyLastStacks();
-				current_index--;
+				closeLastStack();
+
 				if (opStacks[current_index].top() == functions::COMPOSE)
 				{
-					functions::Operations op = opStacks[current_index].top();
-					opStacks[current_index].pop();
-					functions::func_ff g = functionStacks[current_index].top();
-					functionStacks[current_index].pop();
-					functions::func_ff f = functionStacks[current_index].top();
-					functionStacks[current_index].pop();
-					functions::executeOperation<float>(op, f, g);
+					executeLastOperation();
 				}
 
 				break;
 
 			case U::PLUS_SIGN:
 				opStacks[current_index].emplace(functions::Operations::ADD);
-				previous = inputBuffer;
 				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
 				inputBuffer = "";
+				previousInputType = operation;
 
 				break;
 
 			case U::HYPHEN_MINUS:
-				opStacks[current_index].emplace(functions::Operations::SUBSTRACT);
-				previous = inputBuffer;
 				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
+
+				opStacks[current_index].emplace(functions::Operations::SUBSTRACT);
 				inputBuffer = "";
+				previousInputType = operation;
 				break;
 
 			case U::ASTERISK:
 				opStacks[current_index].emplace(functions::Operations::MULTIPLY);
-				previous = inputBuffer;
 				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
 				inputBuffer = "";
+				previousInputType = operation;
 				break;
 
 			case U::slash:
 				opStacks[current_index].emplace(functions::Operations::DIVIDE);
-				previous = inputBuffer;
 				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
 				inputBuffer = "";
+				previousInputType = operation;
 				break;
 
 			case U::CIRCUMFLEX_ACCENT:
 				opStacks[current_index].emplace(functions::Operations::POWER);
-				previous = inputBuffer;
 				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
 				inputBuffer = "";
+				previousInputType = operation;
 				break;
 
 			default:
@@ -187,6 +192,7 @@ private:
 		if ((charTyped >= U::LATIN_SMALL_LETTER_A && charTyped <= U::LATIN_SMALL_LETTER_Z) || (charTyped >= U::DIGIT_ZERO && charTyped <= U::DIGIT_NINE) || charTyped == U::period)
 		{
 			inputBuffer.push_back((char)charTyped);
+			previousInputType = operand;
 		}
 
 		Textbox::inputLogic(charTyped);
