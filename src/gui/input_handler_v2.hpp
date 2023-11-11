@@ -29,6 +29,8 @@ public:
 		setCharacterSize(30);
 		setSelected(false);
 		setPosition(position);
+		functionStacks.emplace(std::stack<functions::func_ff>());
+		opStacks.emplace(std::stack<functions::Operations>());
 	}
 
 	void typing(sf::Event input)
@@ -53,8 +55,8 @@ public:
 
 	void storeFunction()
 	{
-		storedFunction = functionStacks[0].top();
-		functionStacks[0].pop();
+		storedFunction = functionStacks.top().top();
+		functionStacks.top().pop();
 	}
 
 	void drawFunction()
@@ -71,10 +73,9 @@ private:
 	GraphWindow* fWindow = nullptr;
 	std::string inputBuffer = "";
 	InputType previousInputType = operation;
-	std::vector<std::stack<functions::func_ff>> functionStacks = { {} };
-	std::vector<std::stack<functions::Operations>> opStacks = { {} };
+	std::stack<std::stack<functions::func_ff>> functionStacks;
+	std::stack<std::stack<functions::Operations>> opStacks;
 	functions::func_ff storedFunction = functions::id<float>;
-	uint current_index = 0;
 
 	void deleteLastCharacter()
 
@@ -84,27 +85,26 @@ private:
 
 	void executeLastOperation()
 	{
-		functions::func_ff g(functionStacks[current_index].top());
-		functionStacks[current_index].pop();
-		functions::func_ff f(functionStacks[current_index].top());
-		functionStacks[current_index].pop();
-		functions::Operations op(opStacks[current_index].top());
-		opStacks[current_index].pop();
-		functionStacks[current_index].emplace(functions::executeOperation<float>(op, f, g));
+		functions::func_ff g(functionStacks.top().top());
+		functionStacks.top().pop();
+		functions::func_ff f(functionStacks.top().top());
+		functionStacks.top().pop();
+		functions::Operations op(opStacks.top().top());
+		opStacks.top().pop();
+		functionStacks.top().emplace(functions::executeOperation<float>(op, f, g));
 	}
 
 	void closeLastStack()
 	{
-		while (opStacks[current_index].size() > 0)
+		while (opStacks.top().size() > 0)
 		{
 			executeLastOperation();
 		}
+		functions::func_ff f = functionStacks.top().top();
+		functionStacks.pop();
+		opStacks.pop();
 
-		functionStacks[current_index - 1].emplace(functionStacks[current_index].top());
-
-		functionStacks.pop_back();
-		opStacks.pop_back();
-		current_index--;
+		functionStacks.top().emplace(f);
 	}
 
 	void inputLogic(int charTyped)
@@ -112,10 +112,12 @@ private:
 		switch (charTyped)
 		{
 			case U::CARRIAGE_RETURN:
-				if(inputBuffer!="")
-					functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
-				if(current_index > 0)
+				if (inputBuffer != "")
+					functionStacks.top().emplace(functions::fromString<float>(inputBuffer));
+				while (functionStacks.size() > 1)
 					closeLastStack();
+				while (opStacks.top().size() != 0)
+					executeLastOperation();
 				storeFunction();
 				drawFunction();
 				inputBuffer = "";
@@ -124,62 +126,73 @@ private:
 				return;
 
 			case U::LEFT_PARENTHESIS:
-				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
+				if(inputBuffer != "")
+					functionStacks.top().emplace(functions::fromString<float>(inputBuffer));
 				inputBuffer = "";
 
 				if (previousInputType == operand)
-					opStacks[current_index].emplace(functions::COMPOSE);
-				current_index++;
-				functionStacks.push_back({});
-				opStacks.push_back({});
+					opStacks.top().emplace(functions::COMPOSE);
+				functionStacks.emplace();
+				opStacks.emplace();
+				previousInputType = operation;
 
 				break;
 
 			case U::RIGHT_PARENTHESIS:
-				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
+				if (inputBuffer != "")
+					functionStacks.top().emplace(functions::fromString<float>(inputBuffer));
 				inputBuffer = "";
 				closeLastStack();
+				previousInputType = operation;
 
-				if (opStacks[current_index].top() == functions::COMPOSE)
+				if (opStacks.top().size() != 0)
 				{
-					executeLastOperation();
+					if ((opStacks.top().top() == functions::COMPOSE || opStacks.top().top() == functions::POWER) && opStacks.top().size() == 1)
+					{
+						executeLastOperation();
+					}
 				}
 
 				break;
 
 			case U::PLUS_SIGN:
-				opStacks[current_index].emplace(functions::Operations::ADD);
-				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
+				opStacks.top().emplace(functions::Operations::ADD);
+				if (inputBuffer != "")
+					functionStacks.top().emplace(functions::fromString<float>(inputBuffer));
 				inputBuffer = "";
 				previousInputType = operation;
 
 				break;
 
 			case U::HYPHEN_MINUS:
-				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
+				if (inputBuffer != "")
+					functionStacks.top().emplace(functions::fromString<float>(inputBuffer));
 
-				opStacks[current_index].emplace(functions::Operations::SUBSTRACT);
+				opStacks.top().emplace(functions::Operations::SUBSTRACT);
 				inputBuffer = "";
 				previousInputType = operation;
 				break;
 
 			case U::ASTERISK:
-				opStacks[current_index].emplace(functions::Operations::MULTIPLY);
-				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
+				if (inputBuffer != "")
+					functionStacks.top().emplace(functions::fromString<float>(inputBuffer));
+				opStacks.top().emplace(functions::Operations::MULTIPLY);
 				inputBuffer = "";
 				previousInputType = operation;
 				break;
 
 			case U::slash:
-				opStacks[current_index].emplace(functions::Operations::DIVIDE);
-				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
+				if (inputBuffer != "")
+					functionStacks.top().emplace(functions::fromString<float>(inputBuffer));
+				opStacks.top().emplace(functions::Operations::DIVIDE);
 				inputBuffer = "";
 				previousInputType = operation;
 				break;
 
 			case U::CIRCUMFLEX_ACCENT:
-				opStacks[current_index].emplace(functions::Operations::POWER);
-				functionStacks[current_index].emplace(functions::fromString<float>(inputBuffer));
+				if (inputBuffer != "")
+					functionStacks.top().emplace(functions::fromString<float>(inputBuffer));
+				opStacks.top().emplace(functions::Operations::POWER);
 				inputBuffer = "";
 				previousInputType = operation;
 				break;

@@ -6,7 +6,7 @@ This project is part of a series of programs coded as an artistic performance. I
 The **end goal** of it all is to build a minimalistic music production software intended for _**private**_ use. I do not yet know if it will be open-source.
 
 ## Current functionality
-Well nothing. I broke it. Stay tuned.
+Draw functions from user input. Currently supported functions : cos, sin, tan, exp, log, constants, identity, cosh, sinh, tanh. Currently supported operations : +, -, \*, /, composition, soon ^.
 
 What **SHOULD** it do?
   Create function objects from input streams and draw them on the current window.

@@ -42,7 +42,7 @@ std::function<T(T)> constant_one = [](T x) { (void)x;
 	return (T)1; };
 
 template <typename T>
-std::function<T(T)> constant_zero = [](T x){(void)x; return (T)0;};
+std::function<T(T)> constant_zero = [](T x) {(void)x; return (T)0; };
 
 template <typename T>
 std::function<T(T)> exp = [](T x) { return std::exp(x); };
@@ -118,10 +118,12 @@ std::function<T(T)> compose(std::function<T(T)> f, std::function<T(T)> g)
 }
 
 template <typename T>
-std::function<T(T)> pow(std::function<T(T)> f, T n)
+std::function<T(T)> pow(std::function<T(T)> f, std::function<T(T)> g)
 {
-	return [f, n](T x) {
-		return std::pow(f(x), n);
+	return [f, g](T x) {
+		if(g(x) >= 0)
+			return std::pow(f(x), g(x));
+		return std::pow((1/f(x)), -g(x));
 	};
 }
 
@@ -160,8 +162,6 @@ std::function<T(T)> select_function(std::string buffer)
 	if (buffer == "")
 		selected_function = functions::constant_one<T>;
 
-
-
 	return selected_function;
 }
 
@@ -180,6 +180,8 @@ std::function<T(T)> executeOperation(Operations op, std::function<T(T)> f, std::
 			return quotient<T>(f, g);
 		case COMPOSE:
 			return compose<T>(f, g);
+		case POWER:
+			return pow<T>(f, g);
 		default:
 			return id<T>;
 	}
