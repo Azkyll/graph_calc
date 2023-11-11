@@ -1,12 +1,11 @@
 # Simple graphic calculator for the refined egirl
 
-## Graphic calculator in development, using SFML 2.5.1.
+## Graphic calculator in development, using C++ & SFML 2.5.1.
 
-This project is part of a series of programs coded as an artistic performance. It started with a simple traditional console calculator, and I'm adding more functionality to it progressively, making a different project for each step.\
-The **end goal** of it all is to build a minimalistic music production software intended for _**private**_ use. I do not yet know if it will be open-source.
+This program is a basis for future works, but should, in the end, be shipped as a standalone app.
 
 ## Current functionality
-Draw functions from user input. Currently supported functions : cos, sin, tan, exp, log, constants, identity, cosh, sinh, tanh. Currently supported operations : +, -, \*, /, composition, soon ^.
+Draw functions from user input. Currently supported functions : cos, sin, tan, exp, log, constants, identity, cosh, sinh, tanh. Currently supported operations : +, -, \*, /, composition, a^b. Doesn't handle writing negative numbers pretty well -- use "0 - f" when you want to use -f.
 
 What **SHOULD** it do?
   Create function objects from input streams and draw them on the current window.
