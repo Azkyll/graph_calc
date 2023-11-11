@@ -21,11 +21,9 @@ int main()
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 1;
 	sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Weird Lil Function Visualisator", sf::Style::Default, settings);
-	const uint32_t framerate = 120;
+	const uint32_t framerate = 60;
 	window.setFramerateLimit(framerate);
 	window.setKeyRepeatEnabled(true);
-	window.setMouseCursorGrabbed(false);
-	window.setMouseCursorVisible(true);
 
 	sf::Font font;
 
@@ -40,14 +38,6 @@ int main()
 
 	InputBox box(fwin, { 0, 650 });
 	box.setFont(font);
-
-
-
-
-
-
-
-	// fwin.addFunction(series);
 
 	// Main loop
 
