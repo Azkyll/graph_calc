@@ -5,10 +5,10 @@
 #include <cstdlib>
 #include <ctime>
 
-#include <windows.h>
 #include <gui/fnbox.hpp>
-#include <gui/input_handler_v2.hpp>
 #include <gui/guiwindow.hpp>
+#include <gui/input_handler_v2.hpp>
+#include <windows.h>
 
 int main()
 {
@@ -32,9 +32,7 @@ int main()
 		std::cout << "Failed to load...\n";
 	};
 
-
 	GraphWindow fwin({ 0, 0 }, { 1920, 600 }, { -10, 10 }, { -10, 10 });
-
 
 	InputBox box(fwin, { 0, 650 });
 	box.setFont(font);
@@ -57,6 +55,7 @@ int main()
 				case sf::Event::Closed:
 					window.close();
 					break;
+
 				case sf::Event::TextEntered:
 					box.typing(event);
 					break;
@@ -74,4 +73,3 @@ int main()
 
 	return 0;
 }
-
