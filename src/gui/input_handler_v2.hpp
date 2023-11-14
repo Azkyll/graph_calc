@@ -1,9 +1,10 @@
 #pragma once
 
+#include <stack>
 #include <SFML/Graphics.hpp>
 #include <gui/function_window.hpp>
 #include <gui/gui_elements/textbox.hpp>
-#include <stack>
+#include <gui/stored_sample.hpp>
 
 #include <unicode-enum.h>
 

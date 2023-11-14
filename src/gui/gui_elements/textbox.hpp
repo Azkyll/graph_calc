@@ -174,6 +174,6 @@ private:
 	sf::Text text;
 	std::ostringstream string;
 	bool isSelected = false;
-	bool hasLimit = true;
+	bool hasLimit = false;
 	uint16_t characterLimit = 30;
 };

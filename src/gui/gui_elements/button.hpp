@@ -5,7 +5,10 @@ class Button
 {
 public:
 	Button()
-	{}
+	{
+		text.setCharacterSize(30);
+	}
+
 	Button(const sf::Vector2f newAnchor, sf::Vector2f newSize, const std::string newText)
 	{
 		text.setString(newText);
@@ -146,6 +149,9 @@ public:
 	{
 		text.setString(str);
 	}
+
+	virtual void click()
+	{}
 
 private:
 	sf::Text text;
