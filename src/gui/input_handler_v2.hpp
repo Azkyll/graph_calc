@@ -123,7 +123,6 @@ private:
 				drawFunction();
 				inputBuffer = "";
 				Textbox::clear();
-				storedFunction = functions::id<float>;
 				return;
 
 			case U::LEFT_PARENTHESIS:

@@ -37,6 +37,9 @@ int main()
 	InputBox box(fwin, { 0, 650 });
 	box.setFont(font);
 
+	PlayButton pb;
+	pb.setFont(font);
+
 	// Main loop
 
 	while (window.isOpen())
@@ -48,6 +51,17 @@ int main()
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 			{
 				fwin.clear();
+			}
+
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Tab))
+			{
+				pb.setFunction(box.getStored());
+			}
+
+			if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				if(pb.isMouseIn(window))
+					pb.click();
 			}
 
 			switch (event.type)
@@ -68,6 +82,7 @@ int main()
 		window.clear(sf::Color::Black);
 		box.drawTo(window);
 		fwin.drawTo(window);
+		pb.drawTo(window);
 		window.display();
 	}
 

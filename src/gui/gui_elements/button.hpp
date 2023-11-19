@@ -7,6 +7,9 @@ public:
 	Button()
 	{
 		text.setCharacterSize(30);
+		text.setStyle(sf::Text::Bold);
+		text.setFillColor(sf::Color::Black);
+		button.setFillColor(sf::Color::White);
 	}
 
 	Button(const sf::Vector2f newAnchor, sf::Vector2f newSize, const std::string newText)
