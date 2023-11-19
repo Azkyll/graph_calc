@@ -4,6 +4,7 @@
 #include <functional>
 #include <iostream>
 
+
 #define ZERO 48
 #define ONE 49
 #define NINE 57
@@ -57,11 +58,21 @@ template <typename T>
 std::function<T(T)> tan = [](T x) { return std::tan(x); };
 
 template <typename T>
+std::function<T(T)> arcsin = [](T x) { return std::asin(x); };
+template <typename T>
+std::function<T(T)> arccos = [](T x) { return std::acos(x); };
+template <typename T>
+std::function<T(T)> arctan = [](T x) { return std::atan(x); };
+
+template <typename T>
 std::function<T(T)> cosh = [](T x) { return 0.5 * (std::exp(x) + std::exp(-x)); };
 template <typename T>
 std::function<T(T)> sinh = [](T x) { return 0.5 * (std::exp(x) - std::exp(-x)); };
 template <typename T>
 std::function<T(T)> tanh = [](T x) { return sinh<T>(x) / cosh<T>(x); };
+
+template <typename T>
+std::function<T(T)> floor = [](T x) { return std::floor(x); };
 
 template <typename T>
 std::function<T(T)> sum(std::function<T(T)> f, std::function<T(T)> g)
@@ -158,6 +169,18 @@ std::function<T(T)> select_function(std::string buffer)
 
 	if (buffer == "tanh")
 		selected_function = functions::tanh<T>;
+
+	if (buffer == "arcsin")
+		selected_function = functions::arcsin<T>;
+
+	if (buffer == "arccos")
+		selected_function = functions::arccos<T>;
+
+	if (buffer == "arctan")
+		selected_function = functions::arctan<T>;
+
+	if(buffer == "floor")
+		selected_function = functions::floor<T>;
 
 	if (buffer == "")
 		selected_function = functions::constant_one<T>;
