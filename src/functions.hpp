@@ -75,6 +75,15 @@ template <typename T>
 std::function<T(T)> floor = [](T x) { return std::floor(x); };
 
 template <typename T>
+std::function<T(T)> sgn = [](T x){
+	if(x>0)
+		return 1;
+	if(x<0)
+		return -1;
+	return 0;
+};
+
+template <typename T>
 std::function<T(T)> sum(std::function<T(T)> f, std::function<T(T)> g)
 {
 	return [f, g](T x) {
@@ -181,6 +190,10 @@ std::function<T(T)> select_function(std::string buffer)
 
 	if(buffer == "floor")
 		selected_function = functions::floor<T>;
+
+	if(buffer == "sgn")
+		selected_function = functions::sgn<T>;
+
 
 	if (buffer == "")
 		selected_function = functions::constant_one<T>;
